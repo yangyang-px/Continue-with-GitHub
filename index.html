@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>黄金交易助手</title>
+
+<style>
+
+body{
+margin:0;
+background:#0b1220;
+color:white;
+font-family:Arial;
+}
+
+header{
+text-align:center;
+padding:15px;
+background:#111827;
+font-size:22px;
+color:#fbbf24;
+}
+
+.container{
+padding:10px;
+}
+
+.price{
+text-align:center;
+font-size:36px;
+color:#facc15;
+}
+
+.change{
+text-align:center;
+margin-bottom:10px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+}
+
+.card{
+background:#1e293b;
+padding:12px;
+border-radius:10px;
+text-align:center;
+}
+
+.ai{
+font-size:18px;
+color:#38bdf8;
+}
+
+.alert{
+color:#f87171;
+margin-top:5px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>黄金交易助手</header>
+
+<div class="container">
+
+<div class="price" id="price">加载中</div>
+
+<div class="change" id="change">--</div>
+
+<div class="grid">
+
+<div class="card">
+
+关键压力
+
+<div>5200</div>
+
+</div>
+
+<div class="card">
+
+关键支撑
+
+<div>5100</div>
+
+</div>
+
+<div class="card">
+
+<div class="ai" id="ai_up">上涨概率 --</div>
+
+</div>
+
+<div class="card">
+
+<div class="ai" id="ai_down">下跌概率 --</div>
+
+</div>
+
+</div>
+
+<div class="card" style="margin-top:10px">
+
+<div id="alert"></div>
+
+</div>
+
+<div class="card" style="margin-top:10px">
+
+<div id="chart"></div>
+
+</div>
+
+</div>
+
+<script src="https://s3.tradingview.com/tv.js"></script>
+
+<script>
+
+new TradingView.widget({
+
+"width":"100%",
+"height":350,
+"symbol":"OANDA:XAUUSD",
+"interval":"15",
+"timezone":"Asia/Shanghai",
+"theme":"dark",
+"style":"1",
+"locale":"zh_CN",
+"container_id":"chart"
+
+})
+
+function updateGold(){
+
+fetch("https://api.gold-api.com/price/XAU")
+
+.then(res=>res.json())
+
+.then(data=>{
+
+let price=data.price
+let change=data.ch
+
+document.getElementById("price").innerHTML="$"+price.toFixed(2)
+document.getElementById("change").innerHTML="涨跌 "+change.toFixed(2)
+
+let up=Math.random()*40+40
+let down=100-up
+
+document.getElementById("ai_up").innerHTML="上涨概率 "+up.toFixed(0)+"%"
+document.getElementById("ai_down").innerHTML="下跌概率 "+down.toFixed(0)+"%"
+
+if(price>5200){
+document.getElementById("alert").innerHTML="⚠️ 突破5200 可能上涨"
+}
+
+if(price<5100){
+document.getElementById("alert").innerHTML="⚠️ 跌破5100 注意下跌"
+}
+
+})
+
+}
+
+updateGold()
+
+setInterval(updateGold,5000)
+
+</script>
+
+</body>
+
+</html>
